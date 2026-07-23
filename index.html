@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💀 PAN Card – Front & Back (Perfect Download)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Arial,sans-serif; }
+        body { background:#0a0a0a; color:#fff; padding:20px; display:flex; flex-direction:column; align-items:center; }
+        h1 { color:#ff3333; text-shadow:0 0 20px #ff333388; margin-bottom:5px; }
+        .sub { color:#999; margin-bottom:20px; }
+        .container { display:flex; flex-wrap:wrap; gap:30px; justify-content:center; max-width:1300px; width:100%; }
+        .form-box { background:#1a1a1a; padding:25px; border-radius:12px; box-shadow:0 0 30px #000000aa; flex:1 1 400px; }
+        .form-box label { display:block; margin:12px 0 4px; font-weight:bold; color:#ccc; }
+        .form-box input, .form-box textarea { width:100%; padding:8px 12px; border:none; border-radius:6px; background:#2a2a2a; color:#fff; font-size:14px; }
+        .form-box textarea { resize:vertical; height:60px; }
+        .form-box input[type="file"] { background:transparent; padding:8px 0; }
+        .form-box button { margin-top:20px; padding:12px 30px; background:#e53935; border:none; border-radius:30px; color:#fff; font-weight:bold; font-size:18px; cursor:pointer; width:100%; transition:0.2s; }
+        .form-box button:hover { background:#ff5252; box-shadow:0 0 20px #e5393588; }
+        .cards-box { flex:1 1 600px; display:flex; flex-direction:column; gap:20px; align-items:center; }
+        .card-pair { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+        .card-wrapper { background:#1a1a1a; padding:15px; border-radius:12px; box-shadow:0 0 20px #00000088; display:flex; flex-direction:column; align-items:center; }
+        .card-wrapper h3 { color:#ff4444; margin-bottom:10px; }
+        canvas { border-radius:8px; box-shadow:0 0 20px #000000aa; max-width:100%; height:auto; background:#fff; }
+        .download-btn { margin-top:10px; padding:10px 25px; background:#43a047; border:none; border-radius:30px; color:#fff; font-weight:bold; font-size:16px; cursor:pointer; transition:0.2s; }
+        .download-btn:hover { background:#66bb6a; box-shadow:0 0 20px #43a04788; }
+        .download-btn.orange { background:#ff9800; }
+        .download-btn.orange:hover { background:#ffb74d; }
+        .footer { margin-top:30px; color:#666; font-size:14px; }
+        #qrTemp { display:none; }
+    </style>
+</head>
+<body>
+    <h1>💀 DEVILS WILL RISE – PAN CARD (FRONT+BACK) 💀</h1>
+    <p class="sub">@SGCodexs | @FfbotAll – Real Look, Perfect Download</p>
+    <div class="container">
+        <div class="form-box">
+            <h3 style="color:#e53935;">📝 Fill Details</h3>
+            <label>Photo (upload image)</label>
+            <input type="file" id="photoInput" accept="image/*">
+            <label>Full Name (as per PAN)</label>
+            <input type="text" id="nameInput" placeholder="e.g. RAHUL KUMAR" value="RAHUL KUMAR">
+            <label>Father's Name</label>
+            <input type="text" id="fatherInput" placeholder="e.g. RAMESH KUMAR" value="RAMESH KUMAR">
+            <label>Date of Birth (DD/MM/YYYY)</label>
+            <input type="text" id="dobInput" placeholder="01/01/1990" value="01/01/1990">
+            <label>PAN Number (10 alphanumeric)</label>
+            <input type="text" id="panInput" placeholder="ABCDE1234F" value="ABCDE1234F">
+            <label>Address</label>
+            <textarea id="addressInput" placeholder="House, Street, City, State - PIN">123, Gandhi Nagar, Delhi - 110001</textarea>
+            <label>Issue Date (DD/MM/YYYY)</label>
+            <input type="text" id="issueDateInput" placeholder="01/01/2020" value="01/01/2020">
+            <label>Signature (upload image)</label>
+            <input type="file" id="signInput" accept="image/*">
+            <button id="generateBtn">🔥 Generate Both Sides 🔥</button>
+        </div>
+        <div class="cards-box">
+            <div class="card-pair">
+                <div class="card-wrapper">
+                    <h3>🔹 Front Side</h3>
+                    <canvas id="frontCanvas" width="550" height="380"></canvas>
+                    <button class="download-btn" id="downloadFront">⬇️ Download Front</button>
+                </div>
+                <div class="card-wrapper">
+                    <h3>🔹 Back Side (with QR)</h3>
+                    <canvas id="backCanvas" width="550" height="380"></canvas>
+                    <button class="download-btn" id="downloadBack">⬇️ Download Back</button>
+                </div>
+            </div>
+            <button class="download-btn orange" id="downloadBoth" style="width:220px;">⬇️ Download Both (Combined)</button>
+        </div>
+    </div>
+    <div class="footer">💀 DEVILS WILL RISE – No Limits, Only Real Code 💀</div>
+
+    <div id="qrTemp"></div>
+
+    <script>
+        (function() {
+            const frontCanvas = document.getElementById('frontCanvas');
+            const fCtx = frontCanvas.getContext('2d');
+            const backCanvas = document.getElementById('backCanvas');
+            const bCtx = backCanvas.getContext('2d');
+            let userPhoto = null;
+            let userSign = null;
+
+            const nameInput = document.getElementById('nameInput');
+            const fatherInput = document.getElementById('fatherInput');
+            const dobInput = document.getElementById('dobInput');
+            const panInput = document.getElementById('panInput');
+            const addressInput = document.getElementById('addressInput');
+            const issueDateInput = document.getElementById('issueDateInput');
+            const photoInput = document.getElementById('photoInput');
+            const signInput = document.getElementById('signInput');
+            const generateBtn = document.getElementById('generateBtn');
+
+            // QR generation
+            function generateQRCanvas(data, size) {
+                const container = document.getElementById('qrTemp');
+                container.innerHTML = '';
+                try {
+                    const qr = new QRCode(container, {
+                        text: data,
+                        width: size,
+                        height: size,
+                        colorDark: "#1b5e20",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                    const qrCanvas = container.querySelector('canvas');
+                    if (qrCanvas) return qrCanvas;
+                    const img = container.querySelector('img');
+                    if (img) {
+                        const c = document.createElement('canvas');
+                        c.width = size; c.height = size;
+                        const ctx = c.getContext('2d');
+                        ctx.drawImage(img, 0, 0, size, size);
+                        return c;
+                    }
+                } catch(e) { return null; }
+                return null;
+            }
+
+            // Draw Front
+            function drawFront(photo, sign) {
+                const w = 550, h = 380;
+                fCtx.clearRect(0, 0, w, h);
+                fCtx.fillStyle = '#f9f9f9';
+                fCtx.fillRect(0, 0, w, h);
+                fCtx.strokeStyle = '#1b5e20';
+                fCtx.lineWidth = 6;
+                fCtx.strokeRect(4, 4, w-8, h-8);
+                fCtx.strokeStyle = '#2e7d32';
+                fCtx.lineWidth = 2;
+                fCtx.strokeRect(10, 10, w-20, h-20);
+
+                fCtx.fillStyle = '#1b5e20';
+                fCtx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+                fCtx.textAlign = 'center';
+                fCtx.fillText('भारत सरकार', w/2, 32);
+                fCtx.fillStyle = '#2e7d32';
+                fCtx.font = '13px Arial';
+                fCtx.fillText('GOVERNMENT OF INDIA', w/2, 50);
+                fCtx.fillStyle = '#1b5e20';
+                fCtx.font = 'bold 14px Arial';
+                fCtx.fillText('आयकर विभाग', w/2, 68);
+                fCtx.fillStyle = '#2e7d32';
+                fCtx.font = '12px Arial';
+                fCtx.fillText('INCOME TAX DEPARTMENT', w/2, 84);
+                fCtx.fillStyle = '#1b5e20';
+                fCtx.font = 'bold 15px Arial';
+                fCtx.fillText('स्थायी खाता संख्या पहचान पत्र', w/2, 104);
+                fCtx.fillStyle = '#2e7d32';
+                fCtx.font = '13px Arial';
+                fCtx.fillText('PERMANENT ACCOUNT NUMBER CARD', w/2, 120);
+                fCtx.strokeStyle = '#1b5e20';
+                fCtx.lineWidth = 1;
+                fCtx.beginPath();
+                fCtx.moveTo(20, 128);
+                fCtx.lineTo(w-20, 128);
+                fCtx.stroke();
+
+                const photoX = 40, photoY = 145, photoSize = 85;
+                fCtx.save();
+                fCtx.beginPath();
+                fCtx.rect(photoX, photoY, photoSize, photoSize);
+                fCtx.closePath();
+                fCtx.clip();
+                if (photo && photo.complete && photo.naturalWidth > 0) {
+                    fCtx.drawImage(photo, photoX, photoY, photoSize, photoSize);
+                } else {
+                    fCtx.fillStyle = '#cfd8dc';
+                    fCtx.fillRect(photoX, photoY, photoSize, photoSize);
+                    fCtx.fillStyle = '#78909c';
+                    fCtx.font = '14px Arial';
+                    fCtx.textAlign = 'center';
+                    fCtx.fillText('📷', photoX + photoSize/2, photoY + photoSize/2 + 5);
+                }
+                fCtx.restore();
+                fCtx.strokeStyle = '#1b5e20';
+                fCtx.lineWidth = 2;
+                fCtx.strokeRect(photoX, photoY, photoSize, photoSize);
+                fCtx.fillStyle = '#1b5e20';
+                fCtx.font = '10px Arial';
+                fCtx.textAlign = 'center';
+                fCtx.fillText('Photo', photoX + photoSize/2, photoY + photoSize + 14);
+
+                const startX = 150;
+                let yPos = 145;
+                fCtx.textAlign = 'left';
+                fCtx.fillStyle = '#000';
+                fCtx.font = 'bold 12px "Segoe UI", Arial, sans-serif';
+                fCtx.fillStyle = '#1b5e20';
+                fCtx.fillText('Name / नाम', startX, yPos);
+                yPos += 18;
+                fCtx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+                fCtx.fillStyle = '#000';
+                const name = nameInput.value.trim().toUpperCase() || 'RAHUL KUMAR';
+                fCtx.fillText(name, startX, yPos);
+                yPos += 28;
+                fCtx.font = 'bold 12px "Segoe UI", Arial, sans-serif';
+                fCtx.fillStyle = '#1b5e20';
+                fCtx.fillText("Father's Name / पिता का नाम", startX, yPos);
+                yPos += 18;
+                fCtx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+                fCtx.fillStyle = '#000';
+                const father = fatherInput.value.trim().toUpperCase() || 'RAMESH KUMAR';
+                fCtx.fillText(father, startX, yPos);
+                yPos += 28;
+                fCtx.font = 'bold 12px "Segoe UI", Arial, sans-serif';
+                fCtx.fillStyle = '#1b5e20';
+                fCtx.fillText('Date of Birth / जन्म तिथि', startX, yPos);
+                yPos += 18;
+                fCtx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+                fCtx.fillStyle = '#000';
+                const dob = dobInput.value.trim() || '01/01/1990';
+                fCtx.fillText(dob, startX, yPos);
+                yPos += 28;
+                fCtx.font = 'bold 12px "Segoe UI", Arial, sans-serif';
+                fCtx.fillStyle = '#1b5e20';
+                fCtx.fillText('PAN / स्थायी खाता संख्या', startX, yPos);
+                yPos += 18;
+                fCtx.font = 'bold 20px "Courier New", monospace';
+                fCtx.fillStyle = '#1b5e20';
+                let pan = panInput.value.trim().toUpperCase() || 'ABCDE1234F';
+                if (pan.length > 10) pan = pan.slice(0,10);
+                fCtx.fillText(pan, startX, yPos);
+                yPos += 30;
+
+                const signX = 40, signY = 290, signW = 80, signH = 40;
+                fCtx.strokeStyle = '#1b5e20';
+                fCtx.lineWidth = 1;
+                fCtx.strokeRect(signX, signY, signW, signH);
+                if (sign && sign.complete && sign.naturalWidth > 0) {
+                    fCtx.drawImage(sign, signX, signY, signW, signH);
+                } else {
+                    fCtx.fillStyle = '#e0e0e0';
+                    fCtx.fillRect(signX, signY, signW, signH);
+                    fCtx.fillStyle = '#666';
+                    fCtx.font = '10px Arial';
+                    fCtx.textAlign = 'center';
+                    fCtx.fillText('Signature', signX + signW/2, signY + signH/2 + 4);
+                }
+                fCtx.fillStyle = '#1b5e20';
+                fCtx.font = '9px Arial';
+                fCtx.textAlign = 'center';
+                fCtx.fillText('Signature', signX + signW/2, signY + signH + 14);
+
+                fCtx.fillStyle = '#e8f5e9';
+                fCtx.fillRect(20, h-40, w-40, 20);
+                fCtx.fillStyle = '#1b5e20';
+                fCtx.font = 'bold 10px Arial';
+                fCtx.textAlign = 'center';
+                fCtx.fillText('🔹 Income Tax Department 🔹  |  www.incometaxindia.gov.in', w/2, h-26);
+                fCtx.fillStyle = '#999';
+                fCtx.font = '8px Arial';
+                fCtx.textAlign = 'center';
+                fCtx.fillText('This is a demonstration card. Not for official use.', w/2, h-8);
+            }
+
+            // Draw Back
+            function drawBack() {
+                const w = 550, h = 380;
+                bCtx.clearRect(0, 0, w, h);
+                bCtx.fillStyle = '#f5f5f5';
+                bCtx.fillRect(0, 0, w, h);
+                bCtx.strokeStyle = '#1b5e20';
+                bCtx.lineWidth = 6;
+                bCtx.strokeRect(4, 4, w-8, h-8);
+                bCtx.strokeStyle = '#2e7d32';
+                bCtx.lineWidth = 2;
+                bCtx.strokeRect(10, 10, w-20, h-20);
+
+                bCtx.fillStyle = '#1b5e20';
+                bCtx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+                bCtx.textAlign = 'center';
+                bCtx.fillText('🔹 PAN CARD – BACK SIDE 🔹', w/2, 32);
+                bCtx.fillStyle = '#2e7d32';
+                bCtx.font = '12px Arial';
+                bCtx.fillText('INCOME TAX DEPARTMENT – GOVERNMENT OF INDIA', w/2, 50);
+                bCtx.strokeStyle = '#1b5e20';
+                bCtx.lineWidth = 1;
+                bCtx.beginPath();
+                bCtx.moveTo(20, 60);
+                bCtx.lineTo(w-20, 60);
+                bCtx.stroke();
+
+                const name = nameInput.value.trim().toUpperCase() || 'RAHUL KUMAR';
+                const father = fatherInput.value.trim().toUpperCase() || 'RAMESH KUMAR';
+                const dob = dobInput.value.trim() || '01/01/1990';
+                const pan = panInput.value.trim().toUpperCase() || 'ABCDE1234F';
+                const address = addressInput.value.trim() || '123, Gandhi Nagar, Delhi - 110001';
+                const issueDate = issueDateInput.value.trim() || '01/01/2020';
+                const qrData = JSON.stringify({ name, father, dob, pan, address, issueDate });
+                const qrSize = 150;
+                const qrCanvas = generateQRCanvas(qrData, qrSize);
+                if (qrCanvas) {
+                    bCtx.drawImage(qrCanvas, 50, 80, qrSize, qrSize);
+                } else {
+                    bCtx.fillStyle = '#e0e0e0';
+                    bCtx.fillRect(50, 80, qrSize, qrSize);
+                    bCtx.fillStyle = '#000';
+                    bCtx.font = '14px Arial';
+                    bCtx.textAlign = 'center';
+                    bCtx.fillText('QR Error', 50 + qrSize/2, 80 + qrSize/2 + 5);
+                }
+
+                const startX = 220;
+                let yPos = 80;
+                bCtx.textAlign = 'left';
+                bCtx.fillStyle = '#000';
+                bCtx.font = 'bold 13px "Segoe UI", Arial, sans-serif';
+                bCtx.fillStyle = '#1b5e20';
+                bCtx.fillText('Address / पता', startX, yPos);
+                yPos += 20;
+                bCtx.font = '14px "Segoe UI", Arial, sans-serif';
+                bCtx.fillStyle = '#000';
+                const addrLines = address.split(',').map(s => s.trim());
+                for (let line of addrLines) {
+                    if (line) {
+                        bCtx.fillText(line, startX, yPos);
+                        yPos += 18;
+                    }
+                }
+                yPos += 10;
+                bCtx.font = 'bold 13px "Segoe UI", Arial, sans-serif';
+                bCtx.fillStyle = '#1b5e20';
+                bCtx.fillText('Issue Date / जारी तिथि', startX, yPos);
+                yPos += 20;
+                bCtx.font = '14px "Segoe UI", Arial, sans-serif';
+                bCtx.fillStyle = '#000';
+                bCtx.fillText(issueDate, startX, yPos);
+                yPos += 30;
+                bCtx.font = 'bold 13px "Segoe UI", Arial, sans-serif';
+                bCtx.fillStyle = '#1b5e20';
+                bCtx.fillText('Helpline', startX, yPos);
+                yPos += 20;
+                bCtx.font = '14px "Segoe UI", Arial, sans-serif';
+                bCtx.fillStyle = '#000';
+                bCtx.fillText('1800-180-1961', startX, yPos);
+                yPos += 30;
+                bCtx.font = 'bold 13px "Segoe UI", Arial, sans-serif';
+                bCtx.fillStyle = '#1b5e20';
+                bCtx.fillText('Email', startX, yPos);
+                yPos += 20;
+                bCtx.font = '14px "Segoe UI", Arial, sans-serif';
+                bCtx.fillStyle = '#000';
+                bCtx.fillText('pan@incometax.gov.in', startX, yPos);
+
+                // Hologram strip
+                bCtx.fillStyle = '#e8f5e9';
+                bCtx.fillRect(20, h-40, w-40, 20);
+                bCtx.fillStyle = '#1b5e20';
+                bCtx.font = 'bold 10px Arial';
+                bCtx.textAlign = 'center';
+                bCtx.fillText('🔹 Income Tax Department 🔹  |  www.incometaxindia.gov.in', w/2, h-26);
+                bCtx.fillStyle = '#999';
+                bCtx.font = '8px Arial';
+                bCtx.textAlign = 'center';
+                bCtx.fillText('This is a demonstration card. Not for official use.', w/2, h-8);
+            }
+
+            function generateBoth() {
+                drawFront(userPhoto, userSign);
+                drawBack();
+            }
+
+            // Helper to download canvas as PNG
+            function downloadCanvas(canvas, filename) {
+                // Use toBlob for best quality and full image
+                canvas.toBlob(function(blob) {
+                    if (!blob) {
+                        // fallback to data URL if toBlob fails
+                        const link = document.createElement('a');
+                        link.download = filename;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                        return;
+                    }
+                    const link = document.createElement('a');
+                    link.download = filename;
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    setTimeout(function() { URL.revokeObjectURL(link.href); }, 100);
+                }, 'image/png');
+            }
+
+            // Download buttons
+            document.getElementById('downloadFront').addEventListener('click', function() {
+                downloadCanvas(frontCanvas, 'pan_card_front.png');
+            });
+            document.getElementById('downloadBack').addEventListener('click', function() {
+                downloadCanvas(backCanvas, 'pan_card_back.png');
+            });
+            document.getElementById('downloadBoth').addEventListener('click', function() {
+                // Create combined canvas: stack front and back vertically
+                const combined = document.createElement('canvas');
+                combined.width = 550;
+                combined.height = 760; // 380 + 380
+                const ctx = combined.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, 550, 760);
+                ctx.drawImage(frontCanvas, 0, 0);
+                ctx.drawImage(backCanvas, 0, 380);
+                downloadCanvas(combined, 'pan_card_both.png');
+            });
+
+            // Upload events
+            photoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        const img = new Image();
+                        img.onload = function() {
+                            userPhoto = img;
+                            generateBoth();
+                        };
+                        img.src = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            signInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        const img = new Image();
+                        img.onload = function() {
+                            userSign = img;
+                            generateBoth();
+                        };
+                        img.src = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            generateBtn.addEventListener('click', generateBoth);
+
+            // Initial draw
+            window.onload = function() {
+                generateBoth();
+            };
+        })();
+    </script>
+</body>
+</html>
