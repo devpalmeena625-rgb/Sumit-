@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 ZIP Storage - Secure Vault</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💀 ZIP STORAGE VAULT</h1>
+            <p>Owner: SUMIT BOSS | Channel: @SGCodexs</p>
+        </div>
+
+        <!-- Security Key Check -->
+        <div id="loginSection">
+            <div class="login-box">
+                <h2>🔑 ENTER SECURITY KEY</h2>
+                <input type="password" id="securityKey" placeholder="Enter 4-digit key" maxlength="4">
+                <button onclick="verifyKey()">UNLOCK VAULT</button>
+                <p id="keyError" style="color: red; display: none;">❌ Wrong key! Try again.</p>
+            </div>
+        </div>
+
+        <!-- Main Vault (Hidden until key correct) -->
+        <div id="vaultSection" style="display: none;">
+            <div class="upload-section">
+                <h2>📤 UPLOAD ZIP FILE</h2>
+                <input type="file" id="fileInput" accept=".zip">
+                <button onclick="uploadZip()">⬆ UPLOAD</button>
+            </div>
+
+            <div class="files-section">
+                <h2>📂 STORED ZIPS</h2>
+                <div id="fileList">
+                    <p>Loading files...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
