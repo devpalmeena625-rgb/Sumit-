@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💀 ZIP + IMAGE STORAGE VAULT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💀 ZIP + IMAGE VAULT</h1>
+            <p>Owner: @FfbotAll | Channel: @SGCodexs</p>
+        </div>
+
+        <!-- Security Key Check -->
+        <div id="loginSection">
+            <div class="login-box">
+                <h2>🔑 ENTER SECURITY KEY</h2>
+                <input type="password" id="securityKey" placeholder="Enter 4-digit key" maxlength="4">
+                <button onclick="verifyKey()">🔓 UNLOCK VAULT</button>
+                <p id="keyError" style="color: #ff0040; display: none;">❌ Wrong key! Try again.</p>
+            </div>
+        </div>
+
+        <!-- Main Vault (Hidden until key correct) -->
+        <div id="vaultSection" style="display: none;">
+            <div class="upload-section">
+                <h2>📤 UPLOAD FILES</h2>
+                <div class="upload-box">
+                    <input type="file" id="fileInput" accept=".zip,.jpg,.jpeg,.png,.gif,.webp,.svg,.bmp">
+                    <button onclick="uploadFile()">⬆ UPLOAD</button>
+                </div>
+                <div class="file-types">
+                    <span>📦 ZIP</span>
+                    <span>🖼️ JPG</span>
+                    <span>🖼️ PNG</span>
+                    <span>🖼️ GIF</span>
+                    <span>🖼️ WebP</span>
+                    <span>🖼️ SVG</span>
+                </div>
+            </div>
+
+            <div class="files-section">
+                <h2>📂 STORED FILES</h2>
+                <div id="fileList">
+                    <p style="color: #666;">📭 Loading files...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
