@@ -1,4 +1,4 @@
-const SECRET_KEY = '9660';
+const SECRET_KEY = '7726';
 let currentFiles = [];
 
 // Verify Security Key
